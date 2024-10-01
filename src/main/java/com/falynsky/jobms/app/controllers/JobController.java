@@ -1,6 +1,7 @@
 package com.falynsky.jobms.app.controllers;
 
 import com.falynsky.jobms.app.dto.JobDTO;
+import com.falynsky.jobms.app.dto.JobWithCompanyDTO;
 import com.falynsky.jobms.app.enities.Job;
 import com.falynsky.jobms.app.services.JobService;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class JobController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Job>> findAll() {
+    public ResponseEntity<List<JobWithCompanyDTO>> findAll() {
         return ResponseEntity.ok(jobService.findAll());
     }
 

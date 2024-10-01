@@ -1,13 +1,14 @@
 package com.falynsky.jobms.app.services;
 
 import com.falynsky.jobms.app.dto.JobDTO;
+import com.falynsky.jobms.app.dto.JobWithCompanyDTO;
 import com.falynsky.jobms.app.enities.Job;
 
 import java.util.List;
 
 public interface JobService {
 
-    List<Job> findAll();
+    List<JobWithCompanyDTO> findAll();
 
     Job findById(Long id);
 
