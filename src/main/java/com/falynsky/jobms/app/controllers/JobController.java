@@ -4,6 +4,7 @@ import com.falynsky.jobms.app.dto.JobDTO;
 import com.falynsky.jobms.app.dto.JobWithCompanyDTO;
 import com.falynsky.jobms.app.enities.Job;
 import com.falynsky.jobms.app.services.JobService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,14 +13,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/jobs")
 public class JobController {
 
     private final JobService jobService;
-
-    public JobController(JobService jobService) {
-        this.jobService = jobService;
-    }
 
     @GetMapping()
     public ResponseEntity<List<JobWithCompanyDTO>> findAll() {
@@ -64,7 +62,7 @@ public class JobController {
             throw new NoSuchElementException("Job not found");
         }
 
-//        jobService.updateJob(jobWithCompanyDTO, job);
+        jobService.updateJob(jobWithCompanyDTO, job);
 
         return ResponseEntity.ok().build();
     }

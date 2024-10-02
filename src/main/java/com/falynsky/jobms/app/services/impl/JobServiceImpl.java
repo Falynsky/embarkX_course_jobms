@@ -34,7 +34,12 @@ public class JobServiceImpl implements JobService {
     @Override
     public JobWithCompanyDTO findById(Long id) {
         Job job = jobRepository.findById(id).orElse(null);
-        return convertToDto(job);
+
+        if (job != null) {
+            return convertToDto(job);
+        }
+
+        return null;
     }
 
     @Override
@@ -56,14 +61,15 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public void updateJob(Job existingJob, Job updatedJob) {
+    public void updateJob(JobWithCompanyDTO existingJob, Job updatedJob) {
         existingJob.setTitle(updatedJob.getTitle() == null ? existingJob.getTitle() : updatedJob.getTitle());
         existingJob.setDescription(updatedJob.getDescription() == null ? existingJob.getDescription() : updatedJob.getDescription());
         existingJob.setMinSalary(updatedJob.getMinSalary() == null ? existingJob.getMinSalary() : updatedJob.getMinSalary());
         existingJob.setMaxSalary(updatedJob.getMaxSalary() == null ? existingJob.getMaxSalary() : updatedJob.getMaxSalary());
         existingJob.setLocation(updatedJob.getLocation() == null ? existingJob.getLocation() : updatedJob.getLocation());
         existingJob.setCompanyId(updatedJob.getCompanyId() == null ? existingJob.getCompanyId() : updatedJob.getCompanyId());
-        jobRepository.save(existingJob);
+        Job job = jobCompanyMapper.to(existingJob);
+        jobRepository.save(job);
     }
 
     private JobWithCompanyDTO convertToDto(Job job) {

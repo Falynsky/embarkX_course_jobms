@@ -16,5 +16,5 @@ public interface JobService {
 
     void deleteJob(Long id);
 
-    void updateJob(Job existingJob, Job job);
+    void updateJob(JobWithCompanyDTO existingJob, Job job);
 }

@@ -13,8 +13,11 @@ public interface JobCompanyMapper {
     @Mapping(source = "job.title", target = "title")
     @Mapping(source = "job.description", target = "description")
     @Mapping(source = "job.minSalary", target = "minSalary")
+    @Mapping(source = "job.maxSalary", target = "maxSalary")
     @Mapping(source = "job.location", target = "location")
     @Mapping(source = "job.companyId", target = "companyId")
     @Mapping(source = "company", target = "company")
     JobWithCompanyDTO from(Job job, Company company);
+
+    Job to(JobWithCompanyDTO job);
 }
