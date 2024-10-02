@@ -33,19 +33,19 @@ public class JobController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Job> find(@PathVariable Long id) {
-        Job job = jobService.findById(id);
+    public ResponseEntity<JobWithCompanyDTO> find(@PathVariable Long id) {
+        JobWithCompanyDTO jobWithCompanyDTO = jobService.findById(id);
 
-        if (job == null) {
+        if (jobWithCompanyDTO == null) {
             throw new NoSuchElementException("Job not found");
         }
 
-        return ResponseEntity.ok(job);
+        return ResponseEntity.ok(jobWithCompanyDTO);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteJobById(@PathVariable Long id) {
-        Job job = jobService.findById(id);
+        JobWithCompanyDTO job = jobService.findById(id);
 
         if (job == null) {
             throw new NoSuchElementException("Job not found");
@@ -58,13 +58,13 @@ public class JobController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateJob(@PathVariable Long id, @RequestBody Job job) {
-        Job existingJob = jobService.findById(id);
+        JobWithCompanyDTO jobWithCompanyDTO = jobService.findById(id);
 
-        if (existingJob == null) {
+        if (jobWithCompanyDTO == null) {
             throw new NoSuchElementException("Job not found");
         }
 
-        jobService.updateJob(existingJob, job);
+//        jobService.updateJob(jobWithCompanyDTO, job);
 
         return ResponseEntity.ok().build();
     }

@@ -10,7 +10,7 @@ public interface JobService {
 
     List<JobWithCompanyDTO> findAll();
 
-    Job findById(Long id);
+    JobWithCompanyDTO findById(Long id);
 
     void createJob(JobDTO jobDTO);
 

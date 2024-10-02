@@ -6,11 +6,12 @@ import com.falynsky.jobms.app.enities.Job;
 import com.falynsky.jobms.app.enities.external.Company;
 import com.falynsky.jobms.app.repositories.JobRepository;
 import com.falynsky.jobms.app.services.JobService;
+import com.falynsky.jobms.configs.MSLinks;
+import com.falynsky.jobms.mappers.JobCompanyMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestOperations;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +19,9 @@ import java.util.stream.Collectors;
 @Service
 public class JobServiceImpl implements JobService {
 
-    JobRepository jobRepository;
+    private final JobRepository jobRepository;
+    private final RestOperations restTemplate;
+    private final JobCompanyMapper jobCompanyMapper;
 
     @Override
     public List<JobWithCompanyDTO> findAll() {
@@ -29,8 +32,9 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Job findById(Long id) {
-        return jobRepository.findById(id).orElse(null);
+    public JobWithCompanyDTO findById(Long id) {
+        Job job = jobRepository.findById(id).orElse(null);
+        return convertToDto(job);
     }
 
     @Override
@@ -63,12 +67,7 @@ public class JobServiceImpl implements JobService {
     }
 
     private JobWithCompanyDTO convertToDto(Job job) {
-        JobWithCompanyDTO jobWithCompanyDTO = new JobWithCompanyDTO();
-        jobWithCompanyDTO.setJob(job);
-        RestTemplate restTemplate = new RestTemplate();
-        Company company = restTemplate.getForObject("http://localhost:8081/companies/" + job.getCompanyId(), Company.class);
-        jobWithCompanyDTO.setCompany(company);
-
-        return jobWithCompanyDTO;
+        Company company = restTemplate.getForObject(MSLinks.COMPANYMS + "/companies/" + job.getCompanyId(), Company.class);
+        return jobCompanyMapper.from(job, company);
     }
 }
