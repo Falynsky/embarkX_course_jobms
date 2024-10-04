@@ -1,7 +1,6 @@
 package com.falynsky.jobms.app.controllers;
 
 import com.falynsky.jobms.app.dto.JobDTO;
-import com.falynsky.jobms.app.dto.JobWithCompanyDTO;
 import com.falynsky.jobms.app.enities.Job;
 import com.falynsky.jobms.app.services.JobService;
 import lombok.AllArgsConstructor;
@@ -20,7 +19,7 @@ public class JobController {
     private final JobService jobService;
 
     @GetMapping()
-    public ResponseEntity<List<JobWithCompanyDTO>> findAll() {
+    public ResponseEntity<List<JobDTO>> findAll() {
         return ResponseEntity.ok(jobService.findAll());
     }
 
@@ -31,19 +30,19 @@ public class JobController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<JobWithCompanyDTO> find(@PathVariable Long id) {
-        JobWithCompanyDTO jobWithCompanyDTO = jobService.findById(id);
+    public ResponseEntity<JobDTO> find(@PathVariable Long id) {
+        JobDTO jobDTO = jobService.findById(id);
 
-        if (jobWithCompanyDTO == null) {
+        if (jobDTO == null) {
             throw new NoSuchElementException("Job not found");
         }
 
-        return ResponseEntity.ok(jobWithCompanyDTO);
+        return ResponseEntity.ok(jobDTO);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteJobById(@PathVariable Long id) {
-        JobWithCompanyDTO job = jobService.findById(id);
+        JobDTO job = jobService.findById(id);
 
         if (job == null) {
             throw new NoSuchElementException("Job not found");
@@ -56,13 +55,13 @@ public class JobController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateJob(@PathVariable Long id, @RequestBody Job job) {
-        JobWithCompanyDTO jobWithCompanyDTO = jobService.findById(id);
+        JobDTO jobDTO = jobService.findById(id);
 
-        if (jobWithCompanyDTO == null) {
+        if (jobDTO == null) {
             throw new NoSuchElementException("Job not found");
         }
 
-        jobService.updateJob(jobWithCompanyDTO, job);
+        jobService.updateJob(jobDTO, job);
 
         return ResponseEntity.ok().build();
     }
