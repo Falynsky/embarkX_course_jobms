@@ -1,5 +1,7 @@
 package com.falynsky.jobms.app.services.impl;
 
+import com.falynsky.jobms.app.clients.CompanyClient;
+import com.falynsky.jobms.app.clients.ReviewClient;
 import com.falynsky.jobms.app.dto.JobDTO;
 import com.falynsky.jobms.app.enities.Job;
 import com.falynsky.jobms.app.enities.external.Company;
@@ -14,6 +16,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestOperations;
 
 import java.util.List;
@@ -27,6 +30,8 @@ public class JobServiceImpl implements JobService {
     private final JobRepository jobRepository;
     private final RestOperations restTemplate;
     private final JobCompanyMapper jobCompanyMapper;
+    private final CompanyClient companyClient;
+    private final ReviewClient reviewClient;
 
     @Override
     public List<JobDTO> findAll() {
@@ -78,19 +83,13 @@ public class JobServiceImpl implements JobService {
     }
 
     private JobDTO convertToDto(Job job) {
-        Company company = restTemplate.getForObject(MSLinks.COMPANYMS + "/companies/" + job.getCompanyId(), Company.class);
+        Company company = companyClient.getCompany(job.getCompanyId());
+        List<Review> reviews = reviewClient.getReviews(job.getCompanyId());
 
-        ResponseEntity<List<Review>> reviewResponse = restTemplate.exchange(MSLinks.REVIEWMS + "/reviews?companyId=" + job.getCompanyId(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {
-                });
-
-        if (reviewResponse.getStatusCode() != HttpStatusCode.valueOf(200)) {
+        if (CollectionUtils.isEmpty(reviews)) {
             throw new NoSuchElementException("Reviews not found");
         }
 
-        List<Review> reviews = reviewResponse.getBody();
         return jobCompanyMapper.from(job, company, reviews);
     }
 }
