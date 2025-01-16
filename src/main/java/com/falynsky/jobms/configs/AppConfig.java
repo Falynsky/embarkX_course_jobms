@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class AppConfig {
 
+    //leave if not every call is openFeign
     @Bean
     @LoadBalanced
     public RestTemplate restTemplate() {
