@@ -46,13 +46,9 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public JobDTO findById(Long id) {
-        Job job = jobRepository.findById(id).orElse(null);
-
-        if (job != null) {
-            return convertToDto(job);
-        }
-
-        return null;
+        return jobRepository.findById(id)
+                .map(this::convertToDto)
+                .orElse(null);
     }
 
     @Override
@@ -102,7 +98,7 @@ public class JobServiceImpl implements JobService {
 
         return jobCompanyMapper.from(job, company, reviews);
     }
-    
+
     private void clearCaches() {
         companyCache.clearCache();
         reviewsCache.clearCache();
