@@ -11,6 +11,8 @@ public interface JobService {
 
     JobDTO findById(Long id);
 
+    double findMaxSalaryWithBonusById(Long id);
+
     void createJob(JobDTO jobDTO);
 
     void deleteJob(Long id);

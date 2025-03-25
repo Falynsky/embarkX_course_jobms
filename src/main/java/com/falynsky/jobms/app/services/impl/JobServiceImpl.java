@@ -8,6 +8,7 @@ import com.falynsky.jobms.app.dto.JobDTO;
 import com.falynsky.jobms.app.enities.Job;
 import com.falynsky.jobms.app.enities.external.Company;
 import com.falynsky.jobms.app.enities.external.Review;
+import com.falynsky.jobms.app.helpers.SalaryBonusCalculator;
 import com.falynsky.jobms.app.repositories.JobRepository;
 import com.falynsky.jobms.app.services.JobService;
 import com.falynsky.jobms.mappers.JobCompanyMapper;
@@ -33,6 +34,7 @@ public class JobServiceImpl implements JobService {
     private final CompanyCache companyCache = CompanyCache.INSTANCE;
     private final ReviewsCache reviewsCache = ReviewsCache.INSTANCE;
 
+
     @Override
     public List<JobDTO> findAll() {
         List<Job> jobs = jobRepository.findAll();
@@ -49,6 +51,13 @@ public class JobServiceImpl implements JobService {
         return jobRepository.findById(id)
                 .map(this::convertToDto)
                 .orElse(null);
+    }
+
+    @Override
+    public double findMaxSalaryWithBonusById(Long id) {
+        return jobRepository.findById(id)
+                .map(this::calculateMaxSalaryWithBonus)
+                .orElseThrow();
     }
 
     @Override
@@ -97,6 +106,15 @@ public class JobServiceImpl implements JobService {
         }
 
         return jobCompanyMapper.from(job, company, reviews);
+    }
+
+    private Double calculateMaxSalaryWithBonus(Job job) {
+        Long maxSalary = job.getMaxSalary();
+        SalaryBonusCalculator salaryBonusCalculator = new SalaryBonusCalculator(maxSalary, 2);
+        Class<? extends SalaryBonusCalculator> clazz = salaryBonusCalculator.getClass();
+        clazz.getConstructors();
+        clazz.getMethods();
+        return salaryBonusCalculator.calculateBonus(600);
     }
 
     private void clearCaches() {

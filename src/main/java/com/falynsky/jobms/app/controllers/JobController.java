@@ -32,6 +32,7 @@ public class JobController {
     @GetMapping("/{id}")
     public ResponseEntity<JobDTO> find(@PathVariable Long id) {
         JobDTO jobDTO = jobService.findById(id);
+        double salary = jobService.findMaxSalaryWithBonusById(id);
 
         if (jobDTO == null) {
             throw new NoSuchElementException("Job not found");
