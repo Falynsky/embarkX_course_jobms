@@ -12,16 +12,21 @@ import com.falynsky.jobms.app.helpers.SalaryBonusCalculator;
 import com.falynsky.jobms.app.repositories.JobRepository;
 import com.falynsky.jobms.app.services.JobService;
 import com.falynsky.jobms.mappers.JobCompanyMapper;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestOperations;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class JobServiceImpl implements JobService {
 
@@ -34,9 +39,15 @@ public class JobServiceImpl implements JobService {
     private final CompanyCache companyCache = CompanyCache.INSTANCE;
     private final ReviewsCache reviewsCache = ReviewsCache.INSTANCE;
 
+    int attempt = 0;
 
     @Override
+//    @CircuitBreaker(name = "companyBreaker", fallbackMethod = "companyBreakerFallback")
+//    @Retry(name = "companyBreaker", fallbackMethod = "companyBreakerFallback")
+//    @RateLimiter(name = "companyBreaker", fallbackMethod = "companyBreakerFallback")
+    @RateLimiter(name = "companyBreaker")
     public List<JobDTO> findAll() {
+        System.out.println("Attempt: "+ ++attempt);
         List<Job> jobs = jobRepository.findAll();
         clearCaches();
         List<JobDTO> jobDTOS = jobs.stream()
@@ -44,6 +55,13 @@ public class JobServiceImpl implements JobService {
                 .collect(Collectors.toList());
         clearCaches();
         return jobDTOS;
+    }
+
+    public List<String> companyBreakerFallback(Exception e) {
+        List<String> list = new ArrayList<>();
+        list.add("Dummy");
+
+        return list;
     }
 
     @Override
