@@ -98,18 +98,12 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public void updateJob(JobDTO existingJob, Job updatedJob) {
-        String title = updatedJob.getTitle();
-        String description = updatedJob.getDescription();
-        Long minSalary = updatedJob.getMinSalary();
-        Long maxSalary = updatedJob.getMaxSalary();
-        String location = updatedJob.getLocation();
-        Long companyId = updatedJob.getCompanyId();
-        existingJob.setTitle(title == null ? existingJob.getTitle() : title);
-        existingJob.setDescription(description == null ? existingJob.getDescription() : description);
-        existingJob.setMinSalary(minSalary == null ? existingJob.getMinSalary() : minSalary);
-        existingJob.setMaxSalary(maxSalary == null ? existingJob.getMaxSalary() : maxSalary);
-        existingJob.setLocation(location == null ? existingJob.getLocation() : location);
-        existingJob.setCompanyId(companyId == null ? existingJob.getCompanyId() : companyId);
+        existingJob.setTitle(updatedJob.getTitle() != null ? updatedJob.getTitle() : existingJob.getTitle());
+        existingJob.setDescription(updatedJob.getDescription() != null ? updatedJob.getDescription() : existingJob.getDescription());
+        existingJob.setMinSalary(updatedJob.getMinSalary() != null ? updatedJob.getMinSalary() : existingJob.getMinSalary());
+        existingJob.setMaxSalary(updatedJob.getMaxSalary() != null ? updatedJob.getMaxSalary() : existingJob.getMaxSalary());
+        existingJob.setLocation(updatedJob.getLocation() != null ? updatedJob.getLocation() : existingJob.getLocation());
+        existingJob.setCompanyId(updatedJob.getCompanyId() != null ? updatedJob.getCompanyId() : existingJob.getCompanyId());
         Job job = jobCompanyMapper.to(existingJob);
         jobRepository.save(job);
     }
